@@ -1,0 +1,22 @@
+{
+  "name": "heic-converter",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx src/app.ts"
+  },
+  "dependencies": {
+    "heic-convert": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/heic-convert": "^2.1.0",
+    "@types/node": "^24.1.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}
