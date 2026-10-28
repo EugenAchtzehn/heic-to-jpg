@@ -22,8 +22,8 @@ fn main() {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_title("HEIC Converter")
-            .with_inner_size([720.0, 560.0])
-            .with_min_inner_size([620.0, 500.0]),
+            .with_inner_size([720.0, 620.0])
+            .with_min_inner_size([620.0, 520.0]),
         ..Default::default()
     };
 
@@ -221,9 +221,12 @@ impl ConverterApp {
         ui.label(RichText::new(label).strong());
         ui.add_space(5.0);
         ui.horizontal(|ui| {
+            // Reserve space for the browse button so a long path cannot push it
+            // outside of the visible area.
+            let path_width = (ui.available_width() - 86.0).max(120.0);
             ui.add_enabled(
                 enabled,
-                egui::TextEdit::singleline(path).desired_width(f32::INFINITY),
+                egui::TextEdit::singleline(path).desired_width(path_width),
             );
             if ui
                 .add_enabled(
@@ -240,6 +243,10 @@ impl ConverterApp {
 }
 
 impl eframe::App for ConverterApp {
+    fn clear_color(&self, _visuals: &egui::Visuals) -> [f32; 4] {
+        Color32::WHITE.to_normalized_gamma_f32()
+    }
+
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let context = ui.ctx().clone();
         self.receive_worker_messages();
@@ -247,66 +254,79 @@ impl eframe::App for ConverterApp {
             context.request_repaint_after(Duration::from_millis(100));
         }
 
-        {
-            ui.add_space(8.0);
-            ui.heading(RichText::new("HEIC 轉 JPG").size(28.0).strong());
-            ui.label(
-                RichText::new("快速、離線地批次轉換照片，並保留原有資料夾結構。")
-                    .color(ui.visuals().weak_text_color()),
-            );
-            ui.add_space(18.0);
-
-            let enabled = !self.is_running();
-            egui::Frame::group(ui.style())
-                .inner_margin(18.0)
-                .corner_radius(12.0)
-                .show(ui, |ui| {
-                    if Self::path_row(ui, "來源資料夾", &mut self.input_dir, enabled) {
-                        self.select_input_folder();
-                    }
-                    ui.add_space(14.0);
-                    if Self::path_row(ui, "輸出資料夾", &mut self.output_dir, enabled) {
-                        self.select_output_folder();
-                    }
-                    ui.add_space(14.0);
-                    ui.horizontal(|ui| {
-                        ui.label(RichText::new("JPEG 品質").strong());
-                        ui.add_enabled(
-                            enabled,
-                            egui::Slider::new(&mut self.quality, 60..=100).suffix("%"),
-                        );
-                    });
-                });
-
-            ui.add_space(14.0);
-            show_status(ui, &self.state);
-            ui.add_space(14.0);
-
-            let button = egui::Button::new(RichText::new("開始轉換").size(17.0).strong())
-                .fill(ACCENT)
-                .min_size([160.0, 42.0].into());
-            if ui.add_enabled(enabled, button).clicked() {
-                self.start(&context);
-            }
-
-            ui.add_space(14.0);
-            ui.label(RichText::new("處理紀錄").strong());
-            egui::ScrollArea::vertical()
-                .auto_shrink([false, false])
-                .max_height(120.0)
-                .stick_to_bottom(true)
-                .show(ui, |ui| {
-                    if self.log.is_empty() {
+        egui::Frame::central_panel(ui.style())
+            .fill(Color32::WHITE)
+            .show(ui, |ui| {
+                egui::ScrollArea::vertical()
+                    .auto_shrink([false, false])
+                    .show(ui, |ui| {
+                        ui.set_min_width(ui.available_width());
+                        ui.add_space(8.0);
+                        ui.heading(RichText::new("HEIC 轉 JPG").size(28.0).strong());
                         ui.label(
-                            RichText::new("尚未開始轉換。").color(ui.visuals().weak_text_color()),
+                            RichText::new("快速、離線地批次轉換照片，並保留原有資料夾結構。")
+                                .color(ui.visuals().weak_text_color()),
                         );
-                    } else {
-                        for line in &self.log {
-                            ui.label(line);
+                        ui.add_space(18.0);
+
+                        let enabled = !self.is_running();
+                        egui::Frame::group(ui.style())
+                            .inner_margin(18.0)
+                            .corner_radius(12.0)
+                            .show(ui, |ui| {
+                                if Self::path_row(ui, "來源資料夾", &mut self.input_dir, enabled)
+                                {
+                                    self.select_input_folder();
+                                }
+                                ui.add_space(14.0);
+                                if Self::path_row(ui, "輸出資料夾", &mut self.output_dir, enabled)
+                                {
+                                    self.select_output_folder();
+                                }
+                                ui.add_space(14.0);
+                                ui.horizontal(|ui| {
+                                    ui.label(RichText::new("JPEG 品質").strong());
+                                    ui.add_enabled(
+                                        enabled,
+                                        egui::Slider::new(&mut self.quality, 60..=100).suffix("%"),
+                                    );
+                                });
+                            });
+
+                        ui.add_space(14.0);
+                        show_status(ui, &self.state);
+                        ui.add_space(14.0);
+
+                        let button =
+                            egui::Button::new(RichText::new("開始轉換").size(17.0).strong())
+                                .fill(ACCENT)
+                                .min_size([160.0, 42.0].into());
+                        if ui.add_enabled(enabled, button).clicked() {
+                            self.start(&context);
                         }
-                    }
-                });
-        }
+
+                        ui.add_space(14.0);
+                        ui.label(RichText::new("處理紀錄").strong());
+                        egui::ScrollArea::vertical()
+                            .auto_shrink([false, false])
+                            .max_height(120.0)
+                            .stick_to_bottom(true)
+                            .show(ui, |ui| {
+                                ui.set_min_width(ui.available_width());
+                                if self.log.is_empty() {
+                                    ui.label(
+                                        RichText::new("尚未開始轉換。")
+                                            .color(ui.visuals().weak_text_color()),
+                                    );
+                                } else {
+                                    for line in &self.log {
+                                        ui.add(egui::Label::new(line).wrap());
+                                    }
+                                }
+                            });
+                        ui.add_space(8.0);
+                    });
+            });
     }
 }
 
@@ -361,7 +381,9 @@ fn configure_style(context: &egui::Context) {
     let mut style = (*context.style_of(theme)).clone();
     style.spacing.item_spacing = [10.0, 8.0].into();
     style.spacing.button_padding = [14.0, 8.0].into();
-    style.visuals.panel_fill = Color32::from_rgb(247, 248, 250);
+    style.visuals.panel_fill = Color32::WHITE;
+    style.visuals.window_fill = Color32::WHITE;
+    style.visuals.extreme_bg_color = Color32::WHITE;
     style.visuals.window_corner_radius = 12.0.into();
     style.visuals.widgets.inactive.corner_radius = 7.0.into();
     style.visuals.widgets.hovered.corner_radius = 7.0.into();
