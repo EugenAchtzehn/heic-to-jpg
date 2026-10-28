@@ -1,0 +1,15 @@
+[package]
+name = "heic-converter"
+version = "1.0.0"
+edition = "2024"
+license = "ISC"
+
+[dependencies]
+anyhow = "1.0"
+jpeg-encoder = "0.7"
+zune-heic = "0.5"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

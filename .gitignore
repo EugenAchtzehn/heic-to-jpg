@@ -1,4 +1,5 @@
-node_modules
-dist
-input/**/*.heic
-output/**/*.jpg
+/target/
+/input/
+/output/
+/node_modules/
+/dist/
