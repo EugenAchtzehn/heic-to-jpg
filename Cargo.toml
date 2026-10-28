@@ -6,7 +6,9 @@ license = "ISC"
 
 [dependencies]
 anyhow = "1.0"
+eframe = "0.37"
 jpeg-encoder = "0.7"
+rfd = "0.17"
 zune-heic = "0.5"
 
 [profile.release]
