@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f7fb" />
+    <title>HEIC Converter</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <div class="app-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img">
+            <path d="M7 3.75h7.1L19 8.65v11.6H7z" />
+            <path d="M14 3.75v5h5M9.75 15.75l2-2 1.55 1.55 1.35-1.35 1.6 1.8M10 10.75h1" />
+          </svg>
+        </div>
+        <div>
+          <p class="eyebrow">LOCAL IMAGE TOOL</p>
+          <h1>HEIC 轉 JPG</h1>
+          <p class="subtitle">快速、離線地批次轉換照片，保留原有資料夾結構。</p>
+        </div>
+      </header>
+
+      <section class="panel settings-panel" aria-labelledby="settings-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">轉換設定</p>
+            <h2 id="settings-title">選擇來源與輸出位置</h2>
+          </div>
+          <span class="privacy-badge"><span></span>全程離線</span>
+        </div>
+
+        <div class="field-group">
+          <label for="input-directory">來源資料夾</label>
+          <div class="path-control">
+            <input id="input-directory" type="text" spellcheck="false" autocomplete="off" />
+            <button id="browse-input" class="secondary-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.75 6.75h6l2 2h8.5v9.5H3.75z" /></svg>
+              瀏覽
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="output-directory">輸出資料夾</label>
+          <div class="path-control">
+            <input id="output-directory" type="text" spellcheck="false" autocomplete="off" />
+            <button id="browse-output" class="secondary-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.75 6.75h6l2 2h8.5v9.5H3.75z" /></svg>
+              瀏覽
+            </button>
+          </div>
+        </div>
+
+        <div class="quality-row">
+          <div>
+            <label for="quality">JPEG 品質</label>
+            <p>品質越高，檔案通常越大。</p>
+          </div>
+          <div class="quality-control">
+            <input id="quality" type="range" min="60" max="100" value="100" />
+            <output id="quality-value" for="quality">100%</output>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel progress-panel" aria-live="polite">
+        <div class="status-row">
+          <div>
+            <p class="section-kicker">處理狀態</p>
+            <p id="status-text" class="status-text">選擇資料夾後即可開始。</p>
+          </div>
+          <p id="progress-count" class="progress-count">0 / 0</p>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <button id="convert-button" class="primary-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.75v11.5M7.5 10.75 12 15.25l4.5-4.5M4.25 19.25h15.5" /></svg>
+          開始轉換
+        </button>
+      </section>
+
+      <section class="panel log-panel" aria-labelledby="log-title">
+        <div class="log-heading">
+          <div>
+            <p class="section-kicker">ACTIVITY</p>
+            <h2 id="log-title">處理紀錄</h2>
+          </div>
+          <button id="clear-log" class="text-button" type="button">清除</button>
+        </div>
+        <div id="log-list" class="log-list">
+          <p class="empty-log">尚未開始轉換。</p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

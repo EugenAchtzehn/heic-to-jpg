@@ -1,0 +1,25 @@
+[package]
+name = "heic-converter"
+version = "1.0.0"
+edition = "2024"
+license = "ISC"
+
+[lib]
+name = "heic_converter_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+anyhow = "1.0"
+jpeg-encoder = "0.7"
+serde = { version = "1", features = ["derive"] }
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+zune-heic = "0.5"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
