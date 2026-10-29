@@ -19,6 +19,9 @@ tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 zune-heic = "0.5"
 
+[dev-dependencies]
+serde_json = "1"
+
 [profile.release]
 lto = "thin"
 codegen-units = 1

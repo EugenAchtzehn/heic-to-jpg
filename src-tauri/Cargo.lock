@@ -1197,6 +1197,7 @@ dependencies = [
  "anyhow",
  "jpeg-encoder",
  "serde",
+ "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-dialog",

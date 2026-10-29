@@ -26,6 +26,7 @@ enum ConversionEvent {
         total: usize,
         succeeded: usize,
         failed: usize,
+        #[serde(rename = "fileName")]
         file_name: String,
         error: Option<String>,
     },
@@ -302,5 +303,21 @@ mod tests {
         let error = format!("{:#}", result.unwrap_err());
         assert!(error.contains("HEIC 解碼器無法處理此檔案"));
         assert!(error.contains("unsupported HEVC bitstream"));
+    }
+
+    #[test]
+    fn progress_event_serializes_file_name_for_the_frontend() {
+        let event = ConversionEvent::Progress {
+            completed: 1,
+            total: 1,
+            succeeded: 1,
+            failed: 0,
+            file_name: "photo.heic".to_owned(),
+            error: None,
+        };
+
+        let json = serde_json::to_value(event).unwrap();
+        assert_eq!(json["fileName"], "photo.heic");
+        assert!(json.get("file_name").is_none());
     }
 }
